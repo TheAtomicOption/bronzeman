@@ -156,7 +156,7 @@ public class BronzemanPlugin extends Plugin {
         }
     }
 
-    /** Loads a players unlcoks everytime they login **/
+    /** Loads a players unlocks everytime they login **/
     private void loadPlayerUnlocks() {
         unlockedItems.clear();
         try {
