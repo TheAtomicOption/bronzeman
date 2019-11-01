@@ -34,7 +34,7 @@ import java.util.List;
  */
 @PluginDescriptor(
         name = "Bronze Man Mode",
-        description = "Show boss spawn timer overlays",
+        description = "Limits access to buying an item on the Grand Exchange until it is obtained otherwise.",
         tags = {"combat", "pve", "overlay", "pvp", "challenge", "bronzeman", "ironman"},
         enabledByDefault = false
 )
