@@ -26,6 +26,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
 /**
  *
  * @author Seth Davis
@@ -40,6 +43,19 @@ import java.util.List;
 )
 @Slf4j
 public class BronzemanPlugin extends Plugin {
+
+    static final Set<Integer> OWNED_INVENTORY_IDS = ImmutableSet.of(
+        0,    // Reward from fishing trawler.
+        93,   // Standard player inventory.
+        94,   // Equipment inventory.
+        95,   // Bank inventory.
+        140,  // A puzzle box inventory.
+        141,  // Barrows reward chest inventory.
+        221,  // Monkey madness puzzle box inventory.
+        390,  // Kingdom Of Miscellania reward inventory.
+        581,  // Chambers of Xeric chest inventory.
+        612,  // Theater of Blood reward chest inventory (Raids 2).
+        626); // Seed vault located inside the Farming Guild.
 
     @Inject
     private Client client;
@@ -81,12 +97,14 @@ public class BronzemanPlugin extends Plugin {
     /** Unlocks all new items that are currently not unlocked **/
     @Subscribe
     public void onItemContainerChanged(ItemContainerChanged e) {
-        for (Item i : e.getItemContainer().getItems()) {
-            if (i == null) continue;
-            if (i.getId() <= 1) continue;
-            if (i.getQuantity() <= 0) continue;    
-            if (!unlockedItems.contains(i.getId())) {
-                queueItemUnlock(i.getId());
+        if (OWNED_INVENTORY_IDS.contains(e.getContainerId())) {
+            for (Item i : e.getItemContainer().getItems()) {
+                if (i == null) continue;
+                if (i.getId() <= 1) continue;
+                if (i.getQuantity() <= 0) continue;
+                if (!unlockedItems.contains(i.getId())) {
+                    queueItemUnlock(i.getId());
+                }
             }
         }
     }
