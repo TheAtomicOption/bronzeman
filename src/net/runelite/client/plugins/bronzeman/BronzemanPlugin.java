@@ -15,6 +15,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.game.ItemManager;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -99,10 +100,13 @@ public class BronzemanPlugin extends Plugin {
     public void onItemContainerChanged(ItemContainerChanged e) {
         if (OWNED_INVENTORY_IDS.contains(e.getContainerId())) {
             for (Item i : e.getItemContainer().getItems()) {
+                int itemId = i.getId();
+                int realItemId = itemManager.canonicalize(itemId);
+                if (itemId != realItemId) continue;
                 if (i == null) continue;
                 if (i.getId() <= 1) continue;
                 if (i.getQuantity() <= 0) continue;
-                if (!unlockedItems.contains(i.getId())) {
+                if (!unlockedItems.contains(itemId)) {
                     queueItemUnlock(i.getId());
                 }
             }
