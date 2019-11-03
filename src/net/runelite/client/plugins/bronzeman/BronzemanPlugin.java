@@ -64,6 +64,9 @@ public class BronzemanPlugin extends Plugin {
     private Client client;
 
     @Inject
+    private ItemManager itemManager;
+
+    @Inject
     private OverlayManager overlayManager;
 
     @Inject
