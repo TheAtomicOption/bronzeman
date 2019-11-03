@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.client.events.PluginChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.WidgetLoaded;
@@ -92,6 +93,14 @@ public class BronzemanPlugin extends Plugin {
     @Subscribe
     public void onGameStateChanged(GameStateChanged e) {
         if (e.getGameState() == GameState.LOGGED_IN) {
+            loadPlayerUnlocks();
+        }
+    }
+
+    @Subscribe
+    public void onPluginChanged(PluginChanged e)
+    {
+        if (e.getPlugin() == this && client.getGameState() == GameState.LOGGED_IN) {
             loadPlayerUnlocks();
         }
     }
