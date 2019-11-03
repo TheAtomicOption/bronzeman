@@ -15,6 +15,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.api.ItemComposition;
 import net.runelite.client.game.ItemManager;
 
 import javax.imageio.ImageIO;
@@ -102,12 +103,14 @@ public class BronzemanPlugin extends Plugin {
             for (Item i : e.getItemContainer().getItems()) {
                 int itemId = i.getId();
                 int realItemId = itemManager.canonicalize(itemId);
-                if (itemId != realItemId) continue;
+                ItemComposition itemComposition = itemManager.getItemComposition(itemId);
+                int noteId = itemComposition.getNote();
+                if (itemId != realItemId && noteId != 799) continue;  // The 799 signifies that it is a noted item
                 if (i == null) continue;
                 if (i.getId() <= 1) continue;
                 if (i.getQuantity() <= 0) continue;
-                if (!unlockedItems.contains(itemId)) {
-                    queueItemUnlock(i.getId());
+                if (!unlockedItems.contains(realItemId)) {
+                    queueItemUnlock(realItemId);
                 }
             }
         }
