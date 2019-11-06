@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.client.events.PluginChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.WidgetLoaded;
@@ -15,6 +16,8 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.api.ItemComposition;
+import net.runelite.client.game.ItemManager;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -26,6 +29,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
 /**
  *
  * @author Seth Davis
@@ -34,15 +40,31 @@ import java.util.List;
  */
 @PluginDescriptor(
         name = "Bronze Man Mode",
-        description = "Show boss spawn timer overlays",
+        description = "Limits access to buying an item on the Grand Exchange until it is obtained otherwise.",
         tags = {"combat", "pve", "overlay", "pvp", "challenge", "bronzeman", "ironman"},
         enabledByDefault = false
 )
 @Slf4j
 public class BronzemanPlugin extends Plugin {
 
+    static final Set<Integer> OWNED_INVENTORY_IDS = ImmutableSet.of(
+        0,    // Reward from fishing trawler.
+        93,   // Standard player inventory.
+        94,   // Equipment inventory.
+        95,   // Bank inventory.
+        140,  // A puzzle box inventory.
+        141,  // Barrows reward chest inventory.
+        221,  // Monkey madness puzzle box inventory.
+        390,  // Kingdom Of Miscellania reward inventory.
+        581,  // Chambers of Xeric chest inventory.
+        612,  // Theater of Blood reward chest inventory (Raids 2).
+        626); // Seed vault located inside the Farming Guild.
+
     @Inject
     private Client client;
+
+    @Inject
+    private ItemManager itemManager;
 
     @Inject
     private OverlayManager overlayManager;
@@ -78,15 +100,30 @@ public class BronzemanPlugin extends Plugin {
         }
     }
 
+    @Subscribe
+    public void onPluginChanged(PluginChanged e)
+    {
+        if (e.getPlugin() == this && client.getGameState() == GameState.LOGGED_IN) {
+            loadPlayerUnlocks();
+        }
+    }
+
     /** Unlocks all new items that are currently not unlocked **/
     @Subscribe
     public void onItemContainerChanged(ItemContainerChanged e) {
-        for (Item i : e.getItemContainer().getItems()) {
-            if (i == null) continue;
-            if (i.getId() <= 1) continue;
-            if (i.getQuantity() <= 0) continue;    
-            if (!unlockedItems.contains(i.getId())) {
-                queueItemUnlock(i.getId());
+        if (OWNED_INVENTORY_IDS.contains(e.getContainerId())) {
+            for (Item i : e.getItemContainer().getItems()) {
+                int itemId = i.getId();
+                int realItemId = itemManager.canonicalize(itemId);
+                ItemComposition itemComposition = itemManager.getItemComposition(itemId);
+                int noteId = itemComposition.getNote();
+                if (itemId != realItemId && noteId != 799) continue;  // The 799 signifies that it is a noted item
+                if (i == null) continue;
+                if (i.getId() <= 1) continue;
+                if (i.getQuantity() <= 0) continue;
+                if (!unlockedItems.contains(realItemId)) {
+                    queueItemUnlock(realItemId);
+                }
             }
         }
     }
