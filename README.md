@@ -6,7 +6,7 @@ IMPORTANT: Setting up Rune-Lite using version control (e.g. git) you can keep yo
 
 NOTE:
  1. WHEN THE PLUGIN IS ENABLED ALL ITEMS IN YOUR INVENTORY/EQUIPMENT AND BANK WILL BE "UNLOCKED".
-    a. To prevent this from occuring it is reccommended you either start a new lvl-3 account or clear your inventory/equipment and bank before  
+    a. To prevent this from occuring it is recommended you either start a new lvl-3 account or clear your inventory/equipment and bank before  
         using the plugin by trading your items over (defeats the bronze-man grind).
         
 Features:
