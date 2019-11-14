@@ -22,3 +22,9 @@ Setup guide:
   4. ~~Paste the 'item-unlocked.png' into the 'runelite-client/main/resources/' folder. http://prntscr.com/mp6doo~~
   4. Enable the plugin on RuneLite's plugin sidebar.
   5. Start your Bronze-Man Mode Adventure!!!!
+
+
+TODO:
+ 1. Cleanup code to meet runelite formatting standards
+ 2. Add config option for "shop items must actually be purchased in order to unlock"
+ 3. Figure out why there is still occasionally a 2nd unlock for the same item when taking things in/out of the bank even after CodePanter (thanks!) fixed most of it. 
